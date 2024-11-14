@@ -225,6 +225,10 @@ body {
     margin: 50px auto;
     padding: 20px;
     border-radius: 10px;
+    resize: both;
+    overflow: auto;
+    min-width: 300px;
+    min-height: 200px;
 }
 
 .modal-header {
@@ -304,6 +308,21 @@ body {
     max-width: 100%;
     border-radius: 8px;
 }
+
+.account-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.account-item button {
+    background: none;
+    border: none;
+    color: #ff4444;
+    cursor: pointer;
+}
 </style>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -351,6 +370,9 @@ body {
         </button>
         <button class="sidebar-btn logout-btn" onclick="logout()">
             <i class="fas fa-sign-out-alt"></i>
+        </button>
+        <button class="sidebar-btn" onclick="showManagementModal()" id="managementBtn" style="display:none;">
+            <i class="fas fa-users-cog"></i>
         </button>
     </div>
 
@@ -407,6 +429,10 @@ body {
                 <i class="fas fa-file-upload"></i>
                 <span>Escolher Arquivo</span>
             </div>
+        </div>
+        <div id="filePreviewContainer" style="display:none; margin: 10px 0;">
+            <img id="imagePreview" style="max-width: 100%; display:none;">
+            <video id="videoPreview" style="max-width: 100%; display:none;" controls></video>
         </div>
         <textarea id="postText" style="width: 100%; height: 100px; margin-bottom: 10px;" placeholder="O que você quer compartilhar?"></textarea>
         <button class="btn" onclick="publishPost()">Publicar</button>
@@ -501,6 +527,35 @@ body {
     </div>
 </div>
 
+<div class="modal" id="managementModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Gerenciamento de Contas</h2>
+            <button class="close-btn" onclick="closeModal('managementModal')">&times;</button>
+        </div>
+        <div class="form-group">
+            <label>Nome:</label>
+            <input type="text" id="newAccountName">
+        </div>
+        <div class="form-group">
+            <label>ID:</label>
+            <input type="text" id="newAccountId">
+        </div>
+        <div class="form-group">
+            <label>Senha:</label>
+            <input type="password" id="newAccountPassword">
+        </div>
+        <div class="form-group">
+            <label>Tipo:</label>
+            <select id="newAccountType">
+                <option value="user">Usuário Comum</option>
+                <option value="admin">Administrador</option>
+            </select>
+        </div>
+        <button class="btn" onclick="createAccount()">Criar Conta</button>
+    </div>
+</div>
+
 <div class="footer">
     Desenvolvido por Fernando Carvalho - ®2024
 </div>
@@ -508,7 +563,9 @@ body {
 <script>
 let currentUser = null;
 const users = [
-    { id: 'admin', password: 'm5l5ndr5', isAdmin: true }
+    { id: 'admin', password: 'm5l5ndr5', isAdmin: true },
+    { id: 'clarice', password: 'ape123', isAdmin: true },
+    { id: 'meire', password: 'ape123', isAdmin: true }
 ];
 const posts = [];
 
@@ -533,6 +590,9 @@ function login() {
         document.getElementById('mainPage').style.display = 'block';
         showWelcomeMessage();
         updateFeed();
+        if (currentUser.isAdmin) {
+            document.getElementById('managementBtn').style.display = 'block';
+        }
     } else {
         alert('ID ou senha inválidos!');
     }
@@ -673,12 +733,16 @@ function updateFeed() {
 
 function showPublishModal() {
     document.getElementById('publishModal').style.display = 'block';
+    makeDraggable(document.getElementById('publishModal'));
 }
 
 function publishPost() {
     const content = document.getElementById('postText').value;
-    if (!content) {
-        alert('Por favor, escreva algo para publicar!');
+    const imagePreview = document.getElementById('imagePreview');
+    const videoPreview = document.getElementById('videoPreview');
+    
+    if (!content && !imagePreview.src && !videoPreview.src) {
+        alert('Por favor, escreva algo ou escolha um arquivo para publicar!');
         return;
     }
     
@@ -700,6 +764,12 @@ function publishPost() {
         });
     }
     
+    if (imagePreview.style.display !== 'none' && imagePreview.src) {
+        enrichedContent += `<img src="${imagePreview.src}" style="max-width: 100%; margin-top: 10px;">`;
+    } else if (videoPreview.style.display !== 'none' && videoPreview.src) {
+        enrichedContent += `<video src="${videoPreview.src}" style="max-width: 100%; margin-top: 10px;" controls></video>`;
+    }
+    
     posts.unshift({
         id: Date.now().toString(),
         user: currentUser,
@@ -712,6 +782,9 @@ function publishPost() {
     updateFeed();
     closeModal('publishModal');
     document.getElementById('postText').value = '';
+    document.getElementById('filePreviewContainer').style.display = 'none';
+    imagePreview.src = '';
+    videoPreview.src = '';
 }
 
 function deletePost(postId) {
@@ -864,10 +937,30 @@ document.getElementById('profilePic').onchange = function(e) {
 function handleFileUpload() {
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = 'image/*';
+    input.accept = 'image/*,video/*';
     input.onchange = (e) => {
         const file = e.target.files[0];
-        // Handle file upload logic here
+        const previewContainer = document.getElementById('filePreviewContainer');
+        const imagePreview = document.getElementById('imagePreview');
+        const videoPreview = document.getElementById('videoPreview');
+        
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewContainer.style.display = 'block';
+                
+                if (file.type.startsWith('image/')) {
+                    imagePreview.style.display = 'block';
+                    videoPreview.style.display = 'none';
+                    imagePreview.src = e.target.result;
+                } else if (file.type.startsWith('video/')) {
+                    videoPreview.style.display = 'block';
+                    imagePreview.style.display = 'none';
+                    videoPreview.src = e.target.result;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
     };
     input.click();
 }
@@ -887,6 +980,70 @@ function confirmYouTube() {
 function openYouTube() {
     window.open('https://www.youtube.com/@apeministerio', '_blank');
     closeModal('youtubeConfirmModal');
+}
+
+function makeDraggable(modal) {
+    const header = modal.querySelector('.modal-header');
+    let isDragging = false;
+    let currentX;
+    let currentY;
+    let initialX;
+    let initialY;
+    
+    header.onmousedown = dragStart;
+    document.onmousemove = drag; 
+    document.onmouseup = dragEnd;
+    
+    function dragStart(e) {
+        initialX = e.clientX - modal.offsetLeft;
+        initialY = e.clientY - modal.offsetTop;
+        isDragging = true;
+    }
+    
+    function drag(e) {
+        if (isDragging) {
+            currentX = e.clientX - initialX;
+            currentY = e.clientY - initialY;
+            modal.style.left = currentX + "px";
+            modal.style.top = currentY + "px";
+        }
+    }
+    
+    function dragEnd() {
+        isDragging = false;
+    }
+}
+
+function showManagementModal() {
+    const modal = document.getElementById('managementModal');
+    modal.style.display = 'block';
+}
+
+function createAccount() {
+    const name = document.getElementById('newAccountName').value;
+    const id = document.getElementById('newAccountId').value;
+    const password = document.getElementById('newAccountPassword').value;
+    const type = document.getElementById('newAccountType').value;
+    
+    if (!name || !id || !password) {
+        alert('Preencha todos os campos!');
+        return;
+    }
+    
+    if (users.find(u => u.id === id)) {
+        alert('Este ID já está em uso!');
+        return;
+    }
+    
+    users.push({
+        name,
+        id,
+        password,
+        isAdmin: type === 'admin'
+    });
+    
+    closeModal('managementModal');
+    alert('Conta criada com sucesso!');
 }
 
 updateRealTime();

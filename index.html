@@ -1,1093 +1,310 @@
-<html><head><base href="http://localhost/" />
-<title>Conexão APE</title>
-<style>
-:root {
-    --primary-color: #e3f2fd;
-    --secondary-color: #1976d2;
-}
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDITOR GRUPO APE - Somos Adoradores Por Excelência</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#0f0c29">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Editor APE">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512x512.png">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
 
-body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: var(--primary-color);
-}
+    <style>
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-.login-container {
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
+        .logo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+            transition: all 0.3s ease;
+            animation: logoFloat 3s ease-in-out infinite;
+        }
 
-.logo-image {
-    max-width: 200px;
-    height: auto;
-    margin-bottom: 20px;
-    border-radius: 10px;
-}
+        @keyframes logoFloat {
+            0%, 100% {
+                transform: translateY(0);
+                box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+            }
+            50% {
+                transform: translateY(-10px);
+                box-shadow: 0 20px 40px rgba(168, 85, 247, 0.5);
+            }
+        }
 
-.app-title {
-    font-size: 2.5em;
-    color: var(--secondary-color);
-    margin-bottom: 10px;
-}
+        .logo:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 35px rgba(139, 92, 246, 0.4);
+        }
 
-.subtitle {
-    font-size: 1.2em;
-    color: #666;
-    margin-bottom: 30px;
-}
+        .header h1 {
+            margin-top: 20px;
+        }
 
-.login-form {
-    background: white;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    width: 300px;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    color: #333;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-.btn {
-    width: 100%;
-    padding: 12px;
-    background: var(--secondary-color);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-}
-
-.btn:hover {
-    background: #1565c0;
-}
-
-.register-link {
-    text-align: center;
-    margin-top: 20px;
-}
-
-.footer {
-    position: fixed;
-    bottom: 20px;
-    width: 100%;
-    text-align: center;
-    color: #666;
-}
-
-/* Feed Styles */
-.main-container {
-    display: none;
-    margin-left: 80px;
-}
-
-.sidebar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    height: 100vh;
-    width: 80px;
-    background: var(--secondary-color);
-    padding: 20px 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.sidebar-btn {
-    width: 50px;
-    height: 50px;
-    margin: 10px 0;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    color: white;
-    font-size: 24px;
-}
-
-.logout-btn {
-    margin-top: auto;
-}
-
-.feed {
-    padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.post {
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.post-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.profile-pic {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin-right: 15px;
-}
-
-.admin-post {
-    border: 2px solid gold;
-}
-
-.crown-icon {
-    color: gold;
-    margin-left: 5px;
-}
-
-/* New Styles for Reactions and Comments */
-.post-actions {
-    margin-top: 15px;
-    display: flex;
-    gap: 10px;
-}
-
-.reaction-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 5px 10px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    border-radius: 5px;
-}
-
-.reaction-btn:hover {
-    background: #f0f0f0;
-}
-
-.comment-section {
-    margin-top: 15px;
-    border-top: 1px solid #eee;
-    padding-top: 15px;
-}
-
-.comment-input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-bottom: 10px;
-}
-
-.comment {
-    padding: 10px;
-    background: #f9f9f9;
-    border-radius: 5px;
-    margin-bottom: 5px;
-}
-
-/* Modal Styles */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-}
-
-.modal-content {
-    background: white;
-    width: 80%;
-    max-width: 500px;
-    margin: 50px auto;
-    padding: 20px;
-    border-radius: 10px;
-    resize: both;
-    overflow: auto;
-    min-width: 300px;
-    min-height: 200px;
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.close-btn {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-}
-
-.post-options {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.post-option {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.post-option i {
-    font-size: 20px;
-}
-
-.real-time {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: white;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.link-preview {
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 10px;
-}
-
-.youtube-embed {
-    margin: 15px 0;
-    position: relative;
-    padding-bottom: 56.25%; /* 16:9 aspect ratio */
-    height: 0;
-    overflow: hidden;
-}
-
-.youtube-embed iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.preview-card {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
-    background: #f5f5f5;
-    border-radius: 5px;
-    margin-top: 5px;
-}
-
-.preview-card i {
-    color: var(--secondary-color);
-}
-
-.radio-player {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-}
-
-.radio-player iframe {
-    max-width: 100%;
-    border-radius: 8px;
-}
-
-.account-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-}
-
-.account-item button {
-    background: none;
-    border: none;
-    color: #ff4444;
-    cursor: pointer;
-}
-</style>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        @media (max-width: 768px) {
+            .logo {
+                width: 80px;
+                height: 80px;
+            }
+        }
+    </style>
 </head>
 <body>
-
-<div class="login-container" id="loginPage">
-    <img src="https://i.ibb.co/kKVNFQ5/ap9-Uvj6t-Txu-URSks-Gviknw.jpg" 
-         alt="Conexão APE Logo" 
-         class="logo-image"
-         width="200"
-         height="200">
-    <h1 class="app-title">Conexão APE</h1>
-    <p class="subtitle">Adoradores Por Excelência</p>
-    <div class="login-form">
-        <div class="form-group">
-            <label>ID:</label>
-            <input type="text" id="loginId">
-        </div>
-        <div class="form-group">
-            <label>Senha:</label>
-            <input type="password" id="loginPassword">
-        </div>
-        <button class="btn" onclick="login()">Entrar</button>
-        <div class="register-link">
-            <a href="#" onclick="showRegister()">Cadastrar-se</a>
-        </div>
-    </div>
-</div>
-
-<div class="main-container" id="mainPage">
-    <div class="real-time" id="realTime"></div>
-    
-    <div class="sidebar">
-        <button class="sidebar-btn" onclick="showPublishModal()">
-            <i class="fas fa-pen"></i>
-        </button>
-        <button class="sidebar-btn" onclick="showProfileModal()">
-            <i class="fas fa-user"></i>
-        </button>
-        <button class="sidebar-btn" onclick="showRadioPlayer()">
-            <i class="fas fa-music"></i>
-        </button>
-        <button class="sidebar-btn" onclick="confirmYouTube()">
-            <i class="fab fa-youtube"></i>
-        </button>
-        <button class="sidebar-btn logout-btn" onclick="logout()">
-            <i class="fas fa-sign-out-alt"></i>
-        </button>
-        <button class="sidebar-btn" onclick="showManagementModal()" id="managementBtn" style="display:none;">
-            <i class="fas fa-users-cog"></i>
-        </button>
-    </div>
-
-    <div class="feed" id="feed"></div>
-</div>
-
-<!-- Modals -->
-<div class="modal" id="registerModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Cadastro</h2>
-            <button class="close-btn" onclick="closeModal('registerModal')">&times;</button>
-        </div>
-        <div class="form-group">
-            <label>Nome/Apelido:</label>
-            <input type="text" id="regName">
-        </div>
-        <div class="form-group">
-            <label>Data de Nascimento:</label>
-            <input type="date" id="regBirth">
-        </div>
-        <div class="form-group">
-            <label>Idade:</label>
-            <input type="number" id="regAge">
-        </div>
-        <div class="form-group">
-            <label>ID:</label>
-            <input type="text" id="regId">
-        </div>
-        <div class="form-group">
-            <label>Senha:</label>
-            <input type="password" id="regPassword">
-        </div>
-        <div class="form-group">
-            <label>Perfil Smule:</label>
-            <input type="text" id="regSmule">
-        </div>
-        <button class="btn" onclick="register()">Cadastrar</button>
-    </div>
-</div>
-
-<div class="modal" id="publishModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Publicar</h2>
-            <button class="close-btn" onclick="closeModal('publishModal')">&times;</button>
-        </div>
-        <div class="post-options">
-            <div class="post-option" onclick="handleTextPost()">
-                <i class="fas fa-font"></i>
-                <span>Texto</span>
-            </div>
-            <div class="post-option" onclick="handleFileUpload()">
-                <i class="fas fa-file-upload"></i>
-                <span>Escolher Arquivo</span>
+    <!-- Tela de Carregamento -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <img src="https://i.ibb.co/HD1kH5FV/logo.webp" alt="APE Logo" class="loading-logo">
+            <h1 class="loading-title">JESUS TE AMA</h1>
+            <p class="loading-subtitle">CARREGANDO SEU AMOR...</p>
+            <div class="loading-spinner"></div>
+            <div class="loading-progress">
+                <div class="progress-bar"></div>
             </div>
         </div>
-        <div id="filePreviewContainer" style="display:none; margin: 10px 0;">
-            <img id="imagePreview" style="max-width: 100%; display:none;">
-            <video id="videoPreview" style="max-width: 100%; display:none;" controls></video>
-        </div>
-        <textarea id="postText" style="width: 100%; height: 100px; margin-bottom: 10px;" placeholder="O que você quer compartilhar?"></textarea>
-        <button class="btn" onclick="publishPost()">Publicar</button>
-        <button class="btn" style="background: #666; margin-top: 10px;" onclick="closeModal('publishModal')">Cancelar</button>
     </div>
-</div>
 
-<div class="modal" id="profileModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Meu Perfil</h2>
-            <button class="close-btn" onclick="closeModal('profileModal')">&times;</button>
-        </div>
-        <div class="form-group">
-            <label>Foto de Perfil:</label>
-            <input type="file" id="profilePic" accept="image/*">
-            <img id="profilePreview" style="width: 100px; height: 100px; border-radius: 50%; margin-top: 10px; display: none;">
-        </div>
-        <div class="form-group">
-            <label>Nome/Apelido:</label>
-            <input type="text" id="profileName">
-        </div>
-        <div class="form-group">
-            <label>Data de Nascimento:</label>
-            <input type="date" id="profileBirth">
-        </div>
-        <div class="form-group">
-            <label>Idade:</label>
-            <input type="number" id="profileAge">
-        </div>
-        <div class="form-group">
-            <label>Perfil Smule:</label>
-            <input type="text" id="profileSmule">
-        </div>
-        <button class="btn" onclick="saveProfile()">Salvar</button>
-    </div>
-</div>
-
-<div class="modal" id="userProfileModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Perfil do Usuário</h2>
-            <button class="close-btn" onclick="closeModal('userProfileModal')">&times;</button>
-        </div>
-        <div id="userProfileContent"></div>
-        <div id="blockUserSection"></div>
-    </div>
-</div>
-
-<div class="modal" id="radioModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Rádio Gospel</h2>
-            <button class="close-btn" onclick="closeModal('radioModal')">&times;</button>
-        </div>
-        <div class="radio-player">
-            <table width="207" border="0">
-                <tbody>
-                    <tr>
-                        <td><a href="http://www.radiogospelmix.com.br" target="_blank"><img src="https://s3-sa-east-1.amazonaws.com/radiofacil-upload/1667/editor/3592dd1ca32134eda1575a2e9e72bcf5.png" alt="Radio Gospel Mix logo" width="207" height="auto"></a></td>
-                    </tr>
-                    <tr>
-                        <td align="center">
-                            <iframe src="https://d6ojw9st89o3o.cloudfront.net/BRGallery/index.php/player/view/flat;65;31;c2Vydmlkb3IzMy5icmxvZ2ljLmNvbS9hcHAucGxheWVyLnBocD9hZGRyZXNzPXNlcnZpZG9yMzMuYnJsb2dpYy5jb20mcG9ydD04MTky;true" 
-                                    border="0" 
-                                    scrolling="no" 
-                                    frameborder="0" 
-                                    allowTransparency="true" 
-                                    style="background-color: transparent;" 
-                                    width="65" 
-                                    height="31">
-                            </iframe>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<div class="modal" id="youtubeConfirmModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Abrir Canal do YouTube</h2>
-            <button class="close-btn" onclick="closeModal('youtubeConfirmModal')">&times;</button>
-        </div>
-        <p>Você será direcionado ao canal do YouTube do Grupo APE. Deseja continuar?</p>
-        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
-            <button class="btn" onclick="openYouTube()" style="width: auto;">Confirmar</button>
-            <button class="btn" onclick="closeModal('youtubeConfirmModal')" style="width: auto; background: #666;">Cancelar</button>
-        </div>
-    </div>
-</div>
-
-<div class="modal" id="managementModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Gerenciamento de Contas</h2>
-            <button class="close-btn" onclick="closeModal('managementModal')">&times;</button>
-        </div>
-        <div class="form-group">
-            <label>Nome:</label>
-            <input type="text" id="newAccountName">
-        </div>
-        <div class="form-group">
-            <label>ID:</label>
-            <input type="text" id="newAccountId">
-        </div>
-        <div class="form-group">
-            <label>Senha:</label>
-            <input type="password" id="newAccountPassword">
-        </div>
-        <div class="form-group">
-            <label>Tipo:</label>
-            <select id="newAccountType">
-                <option value="user">Usuário Comum</option>
-                <option value="admin">Administrador</option>
-            </select>
-        </div>
-        <button class="btn" onclick="createAccount()">Criar Conta</button>
-    </div>
-</div>
-
-<div class="footer">
-    Desenvolvido por Fernando Carvalho - ®2024
-</div>
-
-<script>
-let currentUser = null;
-const users = [
-    { id: 'admin', password: 'm5l5ndr5', isAdmin: true },
-    { id: 'clarice', password: 'ape123', isAdmin: true },
-    { id: 'meire', password: 'ape123', isAdmin: true }
-];
-const posts = [];
-
-function updateRealTime() {
-    const now = new Date();
-    const dateStr = now.toLocaleDateString();
-    const timeStr = now.toLocaleTimeString();
-    document.getElementById('realTime').textContent = `${dateStr} ${timeStr}`;
-}
-
-setInterval(updateRealTime, 1000);
-
-function login() {
-    const id = document.getElementById('loginId').value;
-    const password = document.getElementById('loginPassword').value;
-
-    const user = users.find(u => u.id === id && u.password === password);
-
-    if (user) {
-        currentUser = user;
-        document.getElementById('loginPage').style.display = 'none';
-        document.getElementById('mainPage').style.display = 'block';
-        showWelcomeMessage();
-        updateFeed();
-        if (currentUser.isAdmin) {
-            document.getElementById('managementBtn').style.display = 'block';
-        }
-    } else {
-        alert('ID ou senha inválidos!');
-    }
-}
-
-function showWelcomeMessage() {
-    const modal = document.createElement('div');
-    modal.className = 'modal';
-    modal.style.display = 'block';
-
-    modal.innerHTML = `
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Bem-vindo(a) ao Conexão APE!</h2>
-                <button class="close-btn" onclick="this.closest('.modal').remove()">&times;</button>
+    <div class="app-container" id="appContainer" style="display: none;">
+        <header class="header">
+            <div class="logo-container">
+                <img src="https://i.ibb.co/HD1kH5FV/logo.webp" alt="APE Logo" class="logo">
             </div>
-            <div style="max-height: 70vh; overflow-y: auto; padding: 20px;">
-                <p>Estamos muito felizes em tê-lo(a) conosco neste espaço de adoração e comunhão. O Conexão APE foi criado para ser um ambiente seguro e saudável, onde todos podem crescer espiritualmente e compartilhar da fé em Cristo. Para garantir que isso aconteça, temos algumas regras importantes que pedimos que todos sigam:</p>
+            <h1>EDITOR GRUPO APE</h1>
+            <p>Somos Adoradores Por Excelência</p>
+            <div id="realTimeClock" class="real-time-clock">--:--:--</div>
+        </header>
 
-                <p>💥 Respeito às Igrejas: Aqui não discutimos placas de igreja, doutrinas bíblicas específicas ou debatemos palavras ministradas. Nosso foco é a unidade em Cristo.</p>
-
-                <p>💥 Conversas Privadas: É proibido realizar conversas privadas entre membros sem consentimento. O respeito e a privacidade são fundamentais.</p>
-
-                <p>💥 Conteúdos Espirituais: Evite temas que não agreguem valor à vida espiritual. Queremos que este espaço seja edificante para todos.</p>
-
-                <p>💥 Publicações Inadequadas: Não permitimos postagens de bebidas alcoólicas, conteúdos sensuais ou qualquer material que vá contra a santidade de Deus.</p>
-
-                <p>💥 Sem Política: Este é um grupo de adoração a Deus, então debates políticos não são permitidos.</p>
-
-                <p>💥 Correntes e Pedidos de Dinheiro: É proibido enviar correntes, pedir dinheiro ou divulgar convites para outros grupos ou aplicativos.</p>
-
-                <p>💥 Lives: Somente a administração do grupo pode abrir lives em nome do APE.</p>
-
-                <p>Nossa única regra e fonte de fé é a Bíblia Sagrada, e nos prostramos somente diante de Jesus, nosso único Salvador.</p>
-
-                <p>Que este seja um lugar onde a presença de Deus seja sentida, e juntos possamos crescer em comunhão e adoração. Sinta-se à vontade e seja abençoado(a)!</p>
-
-                <p>Com amor,<br>Equipe Conexão APE</p>
+        <!-- Menu Principal -->
+        <div class="menu-container" id="mainMenu">
+            <h2>Escolha uma opção:</h2>
+            <div class="menu-grid">
+                <button class="menu-option" id="bordasBtn">
+                    <div class="option-icon">🖼️</div>
+                    <span>Bordas</span>
+                </button>
+                <button class="menu-option" id="aniversariantesBtn">
+                    <div class="option-icon">🎂</div>
+                    <span>Aniversariantes</span>
+                </button>
+                <button class="menu-option" id="bordasAniversarioBtn">
+                    <div class="option-icon">🎂</div>
+                    <span>Bordas<br>Aniversário</span>
+                </button>
+                <button class="menu-option" id="downloadApkBtn">
+                    <div class="option-icon">📱</div>
+                    <span>Baixar APK</span>
+                </button>
             </div>
         </div>
-    `;
 
-    document.body.appendChild(modal);
-}
+        <!-- Menu de Bordas -->
+        <div class="menu-container" id="bordasMenu" style="display: none;">
+            <h2>Escolha o tipo de borda:</h2>
+            <div class="menu-grid">
+                <button class="menu-option" data-type="fundadora">
+                    <div class="option-icon">👑</div>
+                    <span>Fundadora</span>
+                </button>
+                <button class="menu-option" data-type="lider">
+                    <div class="option-icon">🎯</div>
+                    <span>Líder</span>
+                </button>
+                <button class="menu-option" data-type="diretor">
+                    <div class="option-icon">📊</div>
+                    <span>Diretor</span>
+                </button>
+                <button class="menu-option" data-type="marketing">
+                    <div class="option-icon">📱</div>
+                    <span>Marketing</span>
+                </button>
+                <button class="menu-option" data-type="membro">
+                    <div class="option-icon">👥</div>
+                    <span>Membro</span>
+                </button>
+                <button class="menu-option back-btn-menu">
+                    <div class="option-icon">←</div>
+                    <span>Voltar</span>
+                </button>
+            </div>
+        </div>
 
-function showRegister() {
-    document.getElementById('registerModal').style.display = 'block';
-}
-
-function register() {
-    const name = document.getElementById('regName').value;
-    const birth = document.getElementById('regBirth').value;
-    const age = document.getElementById('regAge').value;
-    const id = document.getElementById('regId').value;
-    const password = document.getElementById('regPassword').value;
-    const smule = document.getElementById('regSmule').value;
-
-    if (!name || !birth || !age || !id || !password) {
-        alert('Por favor, preencha todos os campos!');
-        return;
-    }
-
-    if (users.some(u => u.id === id)) {
-        alert('Este ID já está em uso!');
-        return;
-    }
-
-    users.push({
-        name,
-        birth,
-        age,
-        id,
-        password,
-        smule,
-        isAdmin: false,
-        blockedUsers: []
-    });
-
-    closeModal('registerModal');
-    alert('Cadastro realizado com sucesso!');
-}
-
-function updateFeed() {
-    const feed = document.getElementById('feed');
-    feed.innerHTML = posts
-        .filter(post => !currentUser.blockedUsers?.includes(post.user.id))
-        .map(post => `
-            <div class="post ${post.user.isAdmin ? 'admin-post' : ''}">
-                <div class="post-header">
-                    <img src="${post.user.profilePic || 'https://via.placeholder.com/50'}" 
-                         class="profile-pic" 
-                         onclick="showUserProfile('${post.user.id}')">
-                    <div>
-                        <strong>${post.user.name || post.user.id}</strong>
-                        ${post.user.isAdmin ? '<i class="fas fa-crown crown-icon"></i>' : ''}
-                        <br>
-                        <small>${post.date}</small>
-                    </div>
+        <!-- Menu de Bordas Aniversário -->
+        <div class="menu-container" id="bordasAniversarioMenu" style="display: none;">
+            <h2>Escolha o slide de aniversário:</h2>
+            <div class="frame-preview-grid">
+                <div class="frame-preview-option" data-type="niver1">
+                    <img src="https://i.ibb.co/ksBSwdS4/NIVER.webp" alt="Slide Aniversário 1" class="frame-preview">
+                    <span>Slide Aniversário 1</span>
                 </div>
-                <div>${post.content}</div>
-                <div class="post-actions">
-                    <button class="reaction-btn" onclick="addReaction('${post.id}', 'like')">
-                        <i class="fas fa-thumbs-up"></i>
-                        <span>${post.reactions?.likes || 0}</span>
-                    </button>
-                    <button class="reaction-btn" onclick="addReaction('${post.id}', 'love')">
-                        <i class="fas fa-heart"></i>
-                        <span>${post.reactions?.loves || 0}</span>
-                    </button>
-                    <button class="reaction-btn" onclick="addReaction('${post.id}', 'dislike')">
-                        <i class="fas fa-thumbs-down"></i>
-                        <span>${post.reactions?.dislikes || 0}</span>
-                    </button>
-                    <button class="reaction-btn" onclick="reportPost('${post.id}')">
-                        <i class="fas fa-flag"></i>
-                    </button>
+                <div class="frame-preview-option" data-type="niver2">
+                    <img src="https://i.ibb.co/pvNgQ6fW/NIVER2.jpg" alt="Slide Aniversário 2" class="frame-preview">
+                    <span>Slide Aniversário 2</span>
                 </div>
-                <div class="comment-section">
-                    <input type="text" class="comment-input" 
-                           placeholder="Adicionar comentário..."
-                           onkeypress="handleCommentSubmit(event, '${post.id}')">
-                    <div class="comments">
-                        ${(post.comments || []).map(comment => `
-                            <div class="comment">
-                                <strong>${comment.user.name || comment.user.id}</strong>: ${comment.text}
-                            </div>
-                        `).join('')}
-                    </div>
+                <div class="frame-preview-option" data-type="niver3">
+                    <img src="https://i.ibb.co/4wqxkYJL/NIVER3.png" alt="Slide Aniversário 3" class="frame-preview">
+                    <span>Slide Aniversário 3</span>
                 </div>
-                ${currentUser.isAdmin ? `
-                    <button onclick="deletePost('${post.id}')" class="btn" style="width: auto; margin-top: 10px;">
-                        <i class="fas fa-trash"></i> Deletar
-                    </button>
-                ` : ''}
+                <div class="frame-preview-option" data-type="niver4">
+                    <img src="https://i.ibb.co/MyDZ0RWX/NIVER4.jpg" alt="Slide Aniversário 4" class="frame-preview">
+                    <span>Slide Aniversário 4</span>
+                </div>
             </div>
-        `).join('');
-}
-
-function showPublishModal() {
-    document.getElementById('publishModal').style.display = 'block';
-    makeDraggable(document.getElementById('publishModal'));
-}
-
-function publishPost() {
-    const content = document.getElementById('postText').value;
-    const imagePreview = document.getElementById('imagePreview');
-    const videoPreview = document.getElementById('videoPreview');
-
-    if (!content && !imagePreview.src && !videoPreview.src) {
-        alert('Por favor, escreva algo ou escolha um arquivo para publicar!');
-        return;
-    }
-
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    const urls = content.match(urlRegex);
-    let enrichedContent = content;
-
-    if (urls) {
-        urls.forEach(url => {
-            // Check if it's a YouTube link
-            if (url.includes('youtube.com') || url.includes('youtu.be')) {
-                const videoId = extractYouTubeId(url);
-                if (videoId) {
-                    enrichedContent = enrichedContent.replace(url, `
-                        <div class="youtube-embed">
-                            <iframe 
-                                width="100%" 
-                                height="315" 
-                                src="https://www.youtube.com/embed/${videoId}" 
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                allowfullscreen>
-                            </iframe>
-                        </div>
-                    `);
-                }
-            } else {
-                enrichedContent = enrichedContent.replace(url, `
-                    <div class="link-preview">
-                        <a href="${url}" target="_blank">${url}</a>
-                        <div class="preview-card">
-                            <i class="fas fa-link"></i>
-                            <span>Link Preview</span>
-                        </div>
-                    </div>
-                `);
-            }
-        });
-    }
-
-    if (imagePreview.style.display !== 'none' && imagePreview.src) {
-        enrichedContent += `<img src="${imagePreview.src}" style="max-width: 100%; margin-top: 10px;">`;
-    } else if (videoPreview.style.display !== 'none' && videoPreview.src) {
-        enrichedContent += `<video src="${videoPreview.src}" style="max-width: 100%; margin-top: 10px;" controls></video>`;
-    }
-
-    posts.unshift({
-        id: Date.now().toString(),
-        user: currentUser,
-        content: enrichedContent,
-        date: new Date().toLocaleString(),
-        reactions: {},
-        comments: []
-    });
-
-    updateFeed();
-    closeModal('publishModal');
-    document.getElementById('postText').value = '';
-    document.getElementById('filePreviewContainer').style.display = 'none';
-    imagePreview.src = '';
-    videoPreview.src = '';
-}
-
-function extractYouTubeId(url) {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-    const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
-}
-
-function deletePost(postId) {
-    const index = posts.findIndex(p => p.id === postId);
-    if (index !== -1) {
-        posts.splice(index, 1);
-        updateFeed();
-    }
-}
-
-function logout() {
-    currentUser = null;
-    document.getElementById('loginPage').style.display = 'flex';
-    document.getElementById('mainPage').style.display = 'none';
-}
-
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
-}
-
-function addReaction(postId, type) {
-    const post = posts.find(p => p.id === postId);
-    if (!post.reactions) post.reactions = {};
-    post.reactions[type + 's'] = (post.reactions[type + 's'] || 0) + 1;
-    updateFeed();
-}
-
-function handleCommentSubmit(event, postId) {
-    if (event.key === 'Enter') {
-        const input = event.target;
-        const post = posts.find(p => p.id === postId);
-        if (!post.comments) post.comments = [];
-        post.comments.push({
-            user: currentUser,
-            text: input.value,
-            date: new Date().toLocaleString()
-        });
-        input.value = '';
-        updateFeed();
-    }
-}
-
-function showUserProfile(userId) {
-    const user = users.find(u => u.id === userId);
-    if (!user) return;
-
-    const modal = document.getElementById('userProfileModal');
-    const content = document.getElementById('userProfileContent');
-    const blockSection = document.getElementById('blockUserSection');
-
-    content.innerHTML = `
-        <img src="${user.profilePic || 'https://via.placeholder.com/100'}" 
-             style="width: 100px; height: 100px; border-radius: 50%;">
-        <h3>${user.name || user.id}</h3>
-        <p>Data de Nascimento: ${user.birth || 'Não informado'}</p>
-        <p>Idade: ${user.age || 'Não informado'}</p>
-        <p>Perfil Smule: ${user.smule || 'Não informado'}</p>
-    `;
-
-    if (!user.isAdmin && user.id !== currentUser.id) {
-        const isBlocked = currentUser.blockedUsers?.includes(user.id);
-        blockSection.innerHTML = `
-            <button class="btn" onclick="toggleBlockUser('${user.id}')">
-                ${isBlocked ? 'Desbloquear' : 'Bloquear'} Usuário
+            <button class="menu-option back-btn-menu">
+                <div class="option-icon">←</div>
+                <span>Voltar</span>
             </button>
-        `;
-    } else {
-        blockSection.innerHTML = '';
-    }
+        </div>
 
-    modal.style.display = 'block';
-}
+        <!-- Menu de Aniversariantes -->
+        <div class="menu-container" id="aniversariantesMenu" style="display: none;">
+            <h2>Aniversariantes</h2>
+            
+            <div class="birthday-tabs">
+                <button class="tab-btn active" data-tab="today">Aniversariantes do Dia</button>
+                <button class="tab-btn" data-tab="all">Todos os Aniversariantes</button>
+            </div>
+            
+            <div id="todayTab" class="tab-content">
+                <div id="todaysBirthdayList" class="birthday-list">
+                    <p class="empty-message">Carregando...</p>
+                </div>
+            </div>
+            
+            <div id="allTab" class="tab-content" style="display: none;">
+                <div class="birthday-filter">
+                    <h3>Filtrar por Mês</h3>
+                    <select id="monthFilter">
+                        <option value="all">Todos os meses</option>
+                        <option value="01">Janeiro</option>
+                        <option value="02">Fevereiro</option>
+                        <option value="03">Março</option>
+                        <option value="04">Abril</option>
+                        <option value="05">Maio</option>
+                        <option value="06">Junho</option>
+                        <option value="07">Julho</option>
+                        <option value="08">Agosto</option>
+                        <option value="09">Setembro</option>
+                        <option value="10">Outubro</option>
+                        <option value="11">Novembro</option>
+                        <option value="12">Dezembro</option>
+                    </select>
+                </div>
+                
+                <div id="allBirthdayList" class="birthday-list">
+                    <p class="empty-message">Carregando...</p>
+                </div>
+            </div>
+            
+            <div class="birthday-form">
+                <h3>Cadastrar Aniversariante</h3>
+                <form id="birthdayForm">
+                    <div class="form-group">
+                        <label>Nome:</label>
+                        <input type="text" id="birthdayName" placeholder="Digite o nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Dia:</label>
+                        <input type="number" id="birthdayDay" placeholder="Digite o dia" min="1" max="31" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Mês:</label>
+                        <input type="number" id="birthdayMonth" placeholder="Digite o mês" min="1" max="12" required>
+                    </div>
+                    <button type="submit" class="submit-btn">Cadastrar</button>
+                </form>
+            </div>
+            
+            <button class="menu-option back-btn-menu">
+                <div class="option-icon">←</div>
+                <span>Voltar</span>
+            </button>
+        </div>
 
-function toggleBlockUser(userId) {
-    if (!currentUser.blockedUsers) currentUser.blockedUsers = [];
+        <!-- Editor de Imagem -->
+        <div class="editor-container" id="editorContainer" style="display: none;">
+            <button class="back-btn" id="backBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Voltar ao Menu
+            </button>
 
-    const index = currentUser.blockedUsers.indexOf(userId);
-    if (index === -1) {
-        currentUser.blockedUsers.push(userId);
-        alert('Usuário bloqueado com sucesso!');
-    } else {
-        currentUser.blockedUsers.splice(index, 1);
-        alert('Usuário desbloqueado com sucesso!');
-    }
+            <div class="toolbar">
+                <div class="upload-section">
+                    <label for="imageUpload" class="upload-btn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2Z" stroke="currentColor" stroke-width="2"/>
+                            <path d="M14 2V8H20" stroke="currentColor" stroke-width="2"/>
+                            <path d="M16 13H8" stroke="currentColor" stroke-width="2"/>
+                            <path d="M12 9V17" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <span>Carregar Sua Foto</span>
+                    </label>
+                    <input type="file" id="imageUpload" accept="image/*" hidden>
+                </div>
 
-    updateFeed();
-    closeModal('userProfileModal');
-}
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Tamanho da Foto</label>
+                        <div class="size-input-container">
+                            <input type="range" id="sizeSlider" min="0" max="200" value="100">
+                            <input type="number" id="sizeInput" min="0" max="200" value="100" class="size-input">
+                            <span>%</span>
+                        </div>
+                    </div>
 
-function reportPost(postId) {
-    alert('Post denunciado! Um administrador irá analisar.');
-}
+                    <div class="control-group">
+                        <label>Eixo X</label>
+                        <input type="range" id="xSlider" min="-100" max="100" value="0">
+                        <span id="xValue">0</span>
+                    </div>
 
-function showProfileModal() {
-    const modal = document.getElementById('profileModal');
-    const user = currentUser;
+                    <div class="control-group">
+                        <label>Eixo Y</label>
+                        <input type="range" id="ySlider" min="-100" max="100" value="0">
+                        <span id="yValue">0</span>
+                    </div>
+                    <div class="control-group">
+                        <label>Rotação</label>
+                        <input type="range" id="rotationSlider" min="-180" max="180" value="0">
+                        <span id="rotationValue">0°</span>
+                    </div>
+                    <button id="resetBtn" class="reset-btn">Resetar</button>
+                </div>
 
-    document.getElementById('profileName').value = user.name || '';
-    document.getElementById('profileBirth').value = user.birth || '';
-    document.getElementById('profileAge').value = user.age || '';
-    document.getElementById('profileSmule').value = user.smule || '';
+                <button id="downloadBtn" class="download-btn" disabled>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2Z" stroke="currentColor" stroke-width="2"/>
+                        <path d="M14 2V8H20" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 18V9" stroke="currentColor" stroke-width="2"/>
+                        <path d="M9 12L12 15L15 12" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <span>Baixar Imagem</span>
+                </button>
+            </div>
 
-    if (user.profilePic) {
-        document.getElementById('profilePreview').src = user.profilePic;
-        document.getElementById('profilePreview').style.display = 'block';
-    }
+            <div class="canvas-container">
+                <canvas id="canvas"></canvas>
+                <div class="placeholder" id="placeholder">
+                    <div class="placeholder-content">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                            <path d="M20 12C20 7.6 16.4 4 12 4C7.6 4 4 7.6 4 12C4 16.4 7.6 20 12 20" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <p>Carregue uma imagem para começar</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    modal.style.display = 'block';
-}
-
-function saveProfile() {
-    const fileInput = document.getElementById('profilePic');
-    const file = fileInput.files[0];
-
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            currentUser.profilePic = e.target.result;
-            updateFeed();
-        };
-        reader.readAsDataURL(file);
-    }
-
-    currentUser.name = document.getElementById('profileName').value;
-    currentUser.birth = document.getElementById('profileBirth').value;
-    currentUser.age = document.getElementById('profileAge').value;
-    currentUser.smule = document.getElementById('profileSmule').value;
-
-    const userIndex = users.findIndex(u => u.id === currentUser.id);
-    if (userIndex !== -1) {
-        users[userIndex] = {...users[userIndex], ...currentUser};
-    }
-
-    updateFeed();
-    closeModal('profileModal');
-}
-
-document.getElementById('profilePic').onchange = function(e) {
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('profilePreview').src = e.target.result;
-            document.getElementById('profilePreview').style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-    }
-};
-
-function handleFileUpload() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*,video/*';
-    input.onchange = (e) => {
-        const file = e.target.files[0];
-        const previewContainer = document.getElementById('filePreviewContainer');
-        const imagePreview = document.getElementById('imagePreview');
-        const videoPreview = document.getElementById('videoPreview');
-
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewContainer.style.display = 'block';
-
-                if (file.type.startsWith('image/')) {
-                    imagePreview.style.display = 'block';
-                    videoPreview.style.display = 'none';
-                    imagePreview.src = e.target.result;
-                } else if (file.type.startsWith('video/')) {
-                    videoPreview.style.display = 'block';
-                    imagePreview.style.display = 'none';
-                    videoPreview.src = e.target.result;
-                }
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-    input.click();
-}
-
-function handleTextPost() {
-    document.getElementById('postText').focus();
-}
-
-function showRadioPlayer() {
-    document.getElementById('radioModal').style.display = 'block';
-}
-
-function confirmYouTube() {
-    document.getElementById('youtubeConfirmModal').style.display = 'block';
-}
-
-function openYouTube() {
-    window.open('https://www.youtube.com/@apeministerio', '_blank');
-    closeModal('youtubeConfirmModal');
-}
-
-function makeDraggable(modal) {
-    const header = modal.querySelector('.modal-header');
-    let isDragging = false;
-    let currentX;
-    let currentY;
-    let initialX;
-    let initialY;
-
-    header.onmousedown = dragStart;
-    document.onmousemove = drag; 
-    document.onmouseup = dragEnd;
-
-    function dragStart(e) {
-        initialX = e.clientX - modal.offsetLeft;
-        initialY = e.clientY - modal.offsetTop;
-        isDragging = true;
-    }
-
-    function drag(e) {
-        if (isDragging) {
-            currentX = e.clientX - initialX;
-            currentY = e.clientY - initialY;
-            modal.style.left = currentX + "px";
-            modal.style.top = currentY + "px";
-        }
-    }
-
-    function dragEnd() {
-        isDragging = false;
-    }
-}
-
-function showManagementModal() {
-    const modal = document.getElementById('managementModal');
-    modal.style.display = 'block';
-}
-
-function createAccount() {
-    const name = document.getElementById('newAccountName').value;
-    const id = document.getElementById('newAccountId').value;
-    const password = document.getElementById('newAccountPassword').value;
-    const type = document.getElementById('newAccountType').value;
-
-    if (!name || !id || !password) {
-        alert('Preencha todos os campos!');
-        return;
-    }
-
-    if (users.find(u => u.id === id)) {
-        alert('Este ID já está em uso!');
-        return;
-    }
-
-    users.push({
-        name,
-        id,
-        password,
-        isAdmin: type === 'admin'
-    });
-
-    closeModal('managementModal');
-    alert('Conta criada com sucesso!');
-}
-
-updateRealTime();
-</script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>

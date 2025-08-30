@@ -21,7 +21,6 @@ class ImageEditor {
             niver1: 'https://i.ibb.co/ksBSwdS4/NIVER.webp',
             niver2: 'https://i.ibb.co/pvNgQ6fW/NIVER2.jpg',
             niver3: 'https://i.ibb.co/4wqxkYJL/NIVER3.png',
-            niver4: 'https://i.ibb.co/MyDZ0RWX/NIVER4.jpg'
         };
         
         this.currentFrameType = null;
@@ -732,26 +731,26 @@ class ImageEditor {
                 let yPos = 0;
                 let xPos = 0;
                 
-                if (this.currentFrameType === 'niver2') {
-                    scale = 0.09; // 9%
+                if (this.currentFrameType === 'niver1') {
+                    scale = 0.29; // 29%
+                    yPos = -8;    // Y -8
+                    xPos = 0;
+                } else if (this.currentFrameType === 'niver2') {
+                    scale = 0.38; // 38%
                     yPos = -6;    // Y -6
                     xPos = 0;
                 } else if (this.currentFrameType === 'niver3') {
-                    scale = 0.08; // 8%
+                    scale = 0.40; // 40%
                     yPos = -8;    // Y -8
                     xPos = 0;
-                } else if (this.currentFrameType === 'niver4') {
-                    scale = 0.09; // 9%
-                    yPos = -38;   // Y -38
-                    xPos = 0;
-                } else if (this.currentFrameType === 'niver1') {
-                    // Default birthday frames settings
-                    scale = 0.07;
-                    yPos = -8;
+                } else if (['fundadora1', 'fundadora2', 'lider', 'diretor', 'marketing', 'membro'].includes(this.currentFrameType)) {
+                    // New default size for regular frames
+                    scale = 0.41; // 41%
+                    yPos = 0;
                     xPos = 0;
                 } else {
-                    // Default regular frames settings
-                    scale = 0.1;
+                    // Default regular frames settings (fallback)
+                    scale = 0.41;
                     yPos = 0;
                     xPos = 0;
                 }
@@ -783,25 +782,25 @@ class ImageEditor {
         const tempCanvas = document.createElement('canvas');
         const tempCtx = tempCanvas.getContext('2d');
         
-        // Use a much larger canvas to ensure full coverage
-        const size = Math.max(img.width, img.height) * 2;
+        // Use the original image dimensions to maintain aspect ratio
+        const size = Math.max(img.width, img.height);
         tempCanvas.width = size;
         tempCanvas.height = size;
         
-        // Fill entire canvas with image, scaled to cover circle
-        const scale = Math.max(size / img.width, size / img.height) * 1.5; // Increase scale to ensure full coverage
+        // Calculate scaling to fit the entire image within the circle
+        const scale = Math.max(size / img.width, size / img.height);
         const scaledWidth = img.width * scale;
         const scaledHeight = img.height * scale;
         const offsetX = (size - scaledWidth) / 2;
         const offsetY = (size - scaledHeight) / 2;
         
-        // Create circular clip with full radius
+        // Create circular clip
         tempCtx.save();
         tempCtx.beginPath();
-        tempCtx.arc(size/2, size/2, size/2 - 2, 0, Math.PI * 2); // Slightly smaller radius to prevent edge artifacts
+        tempCtx.arc(size/2, size/2, size/2, 0, Math.PI * 2);
         tempCtx.clip();
         
-        // Draw image centered and scaled to fill circle
+        // Draw image scaled to fill the circle
         tempCtx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
         tempCtx.restore();
         
